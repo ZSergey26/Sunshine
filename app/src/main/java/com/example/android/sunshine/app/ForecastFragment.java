@@ -1,5 +1,6 @@
 package com.example.android.sunshine.app;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -94,8 +95,38 @@ public class ForecastFragment extends Fragment {
         @Override
         protected Void doInBackground(String... params) {
 
-            String postalCode = params[0];
+            String postalCode;
+            if(params.length != 0)
+            {
+                postalCode = params[0];
+            }
+            else
+            {
+                return null;
+            }
             Log.e(LOG_TAG, "postalCode - > " + postalCode);
+
+            String format = "json";
+            String units = "metric";
+            int numDays = 7;
+
+
+            final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast?";
+            final String QUERY_PARAM = "q";
+            final String FORMAT_PARAM = "mode";
+            final String UNITS_PARAM = "units";
+            final String DAYS_PARAM = "cnt";
+
+
+            Uri.Builder apiRequest = Uri.parse(FORECAST_BASE_URL).buildUpon();
+            apiRequest.appendQueryParameter(QUERY_PARAM, postalCode);
+            apiRequest.appendQueryParameter(FORMAT_PARAM, format);
+            apiRequest.appendQueryParameter(UNITS_PARAM, units);
+            apiRequest.appendQueryParameter(DAYS_PARAM, Integer.toString(numDays));
+            apiRequest.build();
+
+
+            Log.e(LOG_TAG, "Uri.Builder = " + apiRequest);
 
 
             Log.e(LOG_TAG, "doInBackground");
