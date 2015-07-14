@@ -91,6 +91,7 @@ public class ForecastFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Log.e(LOG_TAG, "doInBackground");
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
@@ -123,6 +124,7 @@ public class ForecastFragment extends Fragment {
                 forecastJsonString = buffer.toString();
             } catch (IOException e) {
                 Log.e(LOG_TAG, " IOException!", e);
+                e.printStackTrace();
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -136,6 +138,9 @@ public class ForecastFragment extends Fragment {
                     }
                 }
             }
+
+            if(forecastJsonString!= null)
+                Log.e("KEK",forecastJsonString);
             return null;
         }
     }
