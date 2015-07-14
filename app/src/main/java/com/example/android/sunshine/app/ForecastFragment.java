@@ -25,8 +25,9 @@ import java.util.List;
 
 public class ForecastFragment extends Fragment {
 
-    private final static String LOG_TAG = FetchWeatherTask.class.getSimpleName();
+    //private final static String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
+    private final static String LOG_TAG = "KEK";
     public ForecastFragment() {
     }
 
@@ -42,6 +43,7 @@ public class ForecastFragment extends Fragment {
         inflater.inflate(R.menu.forecastfragment, menu);
     }
 
+    public String POSTAL_CODE = "94043";
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -50,7 +52,7 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
             FetchWeatherTask fetchWeatherTask = new FetchWeatherTask();
-            fetchWeatherTask.execute();
+            fetchWeatherTask.execute(POSTAL_CODE);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -86,11 +88,16 @@ public class ForecastFragment extends Fragment {
         return rootView;
     }
 
-    public class FetchWeatherTask extends AsyncTask<Void, Void, Void>
+    public class FetchWeatherTask extends AsyncTask<String, Void, Void>
     {
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(String... params) {
+
+            String postalCode = params[0];
+            Log.e(LOG_TAG, "postalCode - > " + postalCode);
+
+
             Log.e(LOG_TAG, "doInBackground");
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
