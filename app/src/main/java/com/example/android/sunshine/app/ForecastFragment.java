@@ -65,38 +65,41 @@ public class ForecastFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private ArrayAdapter<String> adapter;
+    private ArrayAdapter<String> forecastAdapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         String[] forecastArray = {
-                "Today - Sunny - 12/32",
-                "Tomorrow - Foggy - 13/28",
                 "Weds - Cloudy - 14/88",
                 "Thurs - Sunny - 14/88",
                 "Fri - Sunny - 14/88",
                 "Sat - Sunny - 14/88",
                 "Sun - Sunny - 14/88",
-                "Today - Sunny - 12/32",
-                "Tomorrow - Foggy - 13/28",
-                "Weds - Cloudy - 14/88",
-                "Thurs - Sunny - 14/88",
-                "Fri - Sunny - 14/88",
-                "Sat - Sunny - 14/88",
-                "Sun - Sunny - 14/88"
         };
         List<String> weekForecast = new ArrayList<>(Arrays.asList(forecastArray));
-        adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textview, weekForecast);
+        forecastAdapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textview, weekForecast);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
-        listView.setAdapter(adapter);
+        listView.setAdapter(forecastAdapter);
 
         return rootView;
     }
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]>
     {
+
+        @Override
+        protected void onPostExecute(String[] result) {
+            if(result != null)
+            {
+                forecastAdapter.clear();
+                for(String dayForecast : result)
+                {
+                    forecastAdapter.add(dayForecast);
+                }
+            }
+        }
 
         @Override
         protected String[] doInBackground(String... params) {
@@ -110,15 +113,12 @@ public class ForecastFragment extends Fragment {
             {
                 return null;
             }
-            Log.e(LOG_TAG, "postalCode - > " + postalCode);
 
             String format = "json";
             String units = "metric";
             int numDays = 7;
 
             // REQUEST EXAMPLE: http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7
-            // 	                http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7
-
 
             final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
             final String QUERY_PARAM = "q";
@@ -134,11 +134,6 @@ public class ForecastFragment extends Fragment {
             apiRequest.appendQueryParameter(DAYS_PARAM, Integer.toString(numDays));
             apiRequest.build();
 
-
-            Log.e(LOG_TAG, "Uri.Builder = " + apiRequest);
-
-
-            Log.e(LOG_TAG, "doInBackground");
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
@@ -188,11 +183,10 @@ public class ForecastFragment extends Fragment {
 
             if(forecastJsonString!= null) {
                 try {
-                    getWeatherDataFromJson(forecastJsonString,numDays);
+                    return getWeatherDataFromJson(forecastJsonString,numDays);
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, "JSON Error", e);
                 }
-                Log.e("KEK", forecastJsonString);
             }
             return null;
         }
