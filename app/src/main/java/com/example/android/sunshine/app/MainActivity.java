@@ -1,9 +1,7 @@
 package com.example.android.sunshine.app;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -45,7 +43,7 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+/*
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU && "LGE".equalsIgnoreCase(Build.BRAND)) {
@@ -63,5 +61,5 @@ public class MainActivity extends ActionBarActivity {
         return super.onKeyUp(keyCode, event);
     }
 
-
+*/
 }

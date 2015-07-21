@@ -66,12 +66,12 @@ public class ForecastFragment extends Fragment {
             return true;
         }
 
-        /*if (id == R.id.action_settings)
+        if (id == R.id.action_settings)
         {
             Intent settingsActivityStart = new Intent(getActivity(), SettingsActivity.class);
             startActivity(settingsActivityStart);
             return true;
-        }*/
+        }
         return super.onOptionsItemSelected(item);
     }
 
