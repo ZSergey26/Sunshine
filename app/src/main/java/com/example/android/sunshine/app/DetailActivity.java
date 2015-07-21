@@ -1,5 +1,6 @@
 package com.example.android.sunshine.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -8,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 public class DetailActivity extends ActionBarActivity {
 
@@ -20,6 +22,8 @@ public class DetailActivity extends ActionBarActivity {
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
+
+
     }
 
 
@@ -58,6 +62,18 @@ public class DetailActivity extends ActionBarActivity {
                                  Bundle savedInstanceState) {
 
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
+            Intent onStartDetailctivity = getActivity().getIntent();
+            if(onStartDetailctivity != null && onStartDetailctivity.hasExtra(Intent.EXTRA_TEXT))
+            {
+                String forecast = onStartDetailctivity.getStringExtra(Intent.EXTRA_TEXT);
+
+                TextView forecastTextView = (TextView) rootView.findViewById(R.id.forecast_text);
+                forecastTextView.setText(forecast);
+
+            }
+
+
             return rootView;
         }
     }
