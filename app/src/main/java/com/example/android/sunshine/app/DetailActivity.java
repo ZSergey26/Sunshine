@@ -43,6 +43,8 @@ public class DetailActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent settingsActivityStart = new Intent(this, SettingsActivity.class);
+            startActivity(settingsActivityStart);
             return true;
         }
 
