@@ -51,6 +51,7 @@ public class ForecastFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
         updateWeather();
     }
 
@@ -113,6 +114,15 @@ public class ForecastFragment extends Fragment {
         return rootView;
     }
 
+
+
+    private String units = "metric";
+    public void setUnits(String units) {
+        this.units = units;
+    }
+
+
+
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]>
     {
 
@@ -142,11 +152,10 @@ public class ForecastFragment extends Fragment {
             }
 
             String format = "json";
-            String units = "metric";
+
             int numDays = 7;
 
             // REQUEST EXAMPLE: http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7
-
             final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
             final String QUERY_PARAM = "q";
             final String FORMAT_PARAM = "mode";
@@ -226,7 +235,16 @@ public class ForecastFragment extends Fragment {
     }
 
 
-    private String formatHighLows(double high, double low) {
+    private String formatHighLows(double high, double low, String unitType) {
+
+        if (unitType.equals(getString(R.string.pref_units_imperial)))
+        {
+            high = (high * 1.8) + 32;
+            low = (low * 1.8) + 32;
+        } else if (!unitType.equals(getString(R.string.pref_units_metric))) {
+            Log.d(LOG_TAG, "Unit type not found: " + unitType);
+        }
+
         long roundedHigh = Math.round(high);
         long roundedLow = Math.round(low);
 
@@ -249,7 +267,6 @@ public class ForecastFragment extends Fragment {
         JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 
 
-
         Time dayTime = new Time();
         dayTime.setToNow();
 
@@ -259,6 +276,8 @@ public class ForecastFragment extends Fragment {
         dayTime = new Time();
 
         String[] resultStrs = new String[numDays];
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String unitType = sharedPrefs.getString(getString(R.string.pref_units_key), getString(R.string.pref_units_metric));
         for(int i = 0; i < weatherArray.length(); i++) {
             // "Day, description, hi/low"
             String day;
@@ -286,7 +305,7 @@ public class ForecastFragment extends Fragment {
             double high = temperatureObject.getDouble(OWM_MAX);
             double low = temperatureObject.getDouble(OWM_MIN);
 
-            highAndLow = formatHighLows(high, low);
+            highAndLow = formatHighLows(high, low, unitType);
             resultStrs[i] = day + " - " + description + " - " + highAndLow;
         }
 
