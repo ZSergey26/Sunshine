@@ -116,11 +116,6 @@ public class ForecastFragment extends Fragment {
 
 
 
-    private String units = "metric";
-    public void setUnits(String units) {
-        this.units = units;
-    }
-
 
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]>
@@ -162,6 +157,7 @@ public class ForecastFragment extends Fragment {
             final String UNITS_PARAM = "units";
             final String DAYS_PARAM = "cnt";
 
+            String units = "metric";
 
             Uri.Builder apiRequest = Uri.parse(FORECAST_BASE_URL).buildUpon();
             apiRequest.appendQueryParameter(QUERY_PARAM, postalCode);
