@@ -10,7 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-
+//test
 public class MainActivity extends ActionBarActivity {
 
     public final static String TAG = "Sunshine";
