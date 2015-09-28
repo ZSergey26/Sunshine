@@ -1,8 +1,8 @@
 package com.example.android.sunshine.app;
 
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -14,16 +14,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.example.android.sunshine.app.data.WeatherContract;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 
 public class ForecastFragment extends Fragment {
 
@@ -72,36 +71,33 @@ public class ForecastFragment extends Fragment {
 
     private void updateWeather()
     {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String postalCode = sharedPref.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-
-        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity(), forecastAdapter);
-        weatherTask.execute(postalCode);
+        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
+        String location = Utility.getPreferredLocation(getActivity());
+        weatherTask.execute(location);
     }
 
 
-    private ArrayAdapter<String> forecastAdapter;
+    private ForecastAdapter forecastAdapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+        String locationSetting = Utility.getPreferredLocation(getActivity());
 
-        forecastAdapter = new ArrayAdapter<>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textview, new ArrayList<String>());
+        // Sort order:  Ascending, by date.
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
+                locationSetting, System.currentTimeMillis());
+
+        Cursor cur = getActivity().getContentResolver().query(weatherForLocationUri,
+                null, null, null, sortOrder);
+
+
+        forecastAdapter = new ForecastAdapter(getActivity(), cur, 0);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(forecastAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String forecast = forecastAdapter.getItem(i);
 
-                Context context = getActivity();
-
-                Intent detailActivityStart = new Intent(context,DetailActivity.class);
-                detailActivityStart.putExtra(Intent.EXTRA_TEXT,forecast);
-                startActivity(detailActivityStart);
-            }
-        });
 
         return rootView;
     }
